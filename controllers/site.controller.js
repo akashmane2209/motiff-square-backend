@@ -56,7 +56,6 @@ exports.updateSite = async (req, res) => {
         handleError(err, res);
         return;
       } else {
-        console.log(success);
         res.status(200).json({
           message: 'Site Updated Successfully'
         });

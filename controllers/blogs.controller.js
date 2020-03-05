@@ -53,7 +53,6 @@ exports.updateBlog = async (req, res) => {
         handleError(err, res);
         return;
       } else {
-        console.log(success);
         res.status(200).json({
           message: 'Blog Updated Successfully'
         });

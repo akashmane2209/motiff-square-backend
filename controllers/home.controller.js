@@ -28,7 +28,6 @@ exports.setHomeConfig = async (req, res) => {
       return;
     }
     await Home.deleteMany({});
-    console.log('All Documents Deleted');
     const { slides, testimonials } = req.body;
     const home = await new Home({
       slides,
