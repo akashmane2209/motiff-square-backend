@@ -5,7 +5,8 @@ const validateTestimonial = testimonial => {
   const schema = Joi.object().keys({
     author: Joi.string().required(),
     content: Joi.string().required(),
-    image: Joi.string().required()
+    image: Joi.string().required(),
+    on_home_page: Joi.boolean().required()
   });
   return schema.validate(testimonial);
 };
@@ -15,7 +16,7 @@ const testimonialSchema = new mongoose.Schema(
     author: { type: String, required: true },
     content: { type: String, require: true },
     image: { type: String, required: true },
-    on_home_page: { type: Boolean, default: false }
+    on_home_page: { type: Boolean, required: true, default: false }
   },
   {
     timestamps: true

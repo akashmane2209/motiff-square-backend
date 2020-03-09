@@ -10,6 +10,7 @@ router
 router
   .route('/:id')
   .put(blogsController.updateBlog)
-  .delete(blogsController.deleteBlog);
+  .delete(blogsController.deleteBlog)
+  .get(blogsController.getBlogById);
 
 module.exports = router;

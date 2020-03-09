@@ -78,3 +78,20 @@ exports.deleteBlog = async (req, res) => {
     handleError(error, res);
   }
 };
+exports.getBlogById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const blog = await Blog.findById(id);
+    if (blog) {
+      res.status(200).json({
+        blog
+      });
+    } else {
+      res.status(404).json({
+        message: 'Blog not found'
+      });
+    }
+  } catch (error) {
+    handleError(error, res);
+  }
+};

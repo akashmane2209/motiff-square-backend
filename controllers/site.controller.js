@@ -3,13 +3,13 @@ const { handleError, handleJoiError } = require('../helpers/errorHandler');
 
 exports.getAllSites = async (req, res) => {
   try {
-    const site = await Site.find().populate({
+    const sites = await Site.find().populate({
       path: 'type',
       ref: 'site-type'
     });
-    if (site.length > 0) {
+    if (sites.length > 0) {
       res.status(200).json({
-        site
+        sites
       });
     } else {
       res.status(404).json({
@@ -28,7 +28,11 @@ exports.addSite = async (req, res) => {
       handleJoiError(error, res);
       return;
     }
-    const site = await new Site(req.body).save();
+    let site = await new Site(req.body).save();
+    site = await Site.findById(site._id).populate({
+      path: 'type',
+      ref: 'site-type'
+    });
     res.status(201).json({
       site
     });

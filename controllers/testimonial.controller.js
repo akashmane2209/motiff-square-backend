@@ -3,7 +3,7 @@ const {
   validateTestimonial
 } = require('../models/testimonial.model');
 const { handleJoiError, handleError } = require('../helpers/errorHandler');
-
+const mongoose = require('mongoose');
 exports.getAllTestimonials = async (req, res) => {
   try {
     const testimonials = await Testimonial.find();
@@ -27,11 +27,12 @@ exports.addTestimonial = async (req, res) => {
       handleJoiError(error, res);
       return;
     }
-    const { author, content, on_home_page } = req.body;
+    const { author, content, on_home_page, image } = req.body;
     const testimonial = await new Testimonial({
       author,
       content,
-      on_home_page
+      on_home_page,
+      image
     }).save();
     res.status(201).json({
       message: 'Testimonial added successfully',
@@ -41,7 +42,23 @@ exports.addTestimonial = async (req, res) => {
     handleError(error, res);
   }
 };
+exports.updateHomePageTestimonials = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    await Testimonial.updateMany({}, { $set: { on_home_page: false } });
 
+    Testimonial.updateMany(
+      { _id: { $in: ids } },
+      { $set: { on_home_page: true } },
+      { multi: true }
+    ).then(product => {
+      console.log('Array of ids updated', product);
+      res.json({ status: true, product: product });
+    });
+  } catch (error) {
+    handleError(error, res);
+  }
+};
 //params operations
 exports.deleteTestimonialController = async (req, res) => {
   try {
@@ -93,6 +110,30 @@ exports.updateTestimonial = async (req, res) => {
       }
     }
   );
+};
+
+exports.getTestimonialById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      const testimonial = await Testimonial.findById(id);
+      if (testimonial) {
+        res.status(200).json({
+          testimonial
+        });
+      } else {
+        res.status(404).json({
+          message: 'Testimonial not found'
+        });
+      }
+    } else {
+      res.status(400).json({
+        message: 'Invalid Testimonial ID'
+      });
+    }
+  } catch (error) {
+    handleError(error, res);
+  }
 };
 
 //update

@@ -3,6 +3,7 @@ const app = express();
 const http = require('http').createServer(app);
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const cloudinary = require('cloudinary');
 const cloudinaryStorage = require('multer-storage-cloudinary');
@@ -27,13 +28,6 @@ var parser = multer({
   })
 });
 
-app.post('/upload-images', parser.array('image'), (req, res, next) => {
-  let data = _.map(req.files, _.partialRight(_.pick, 'secure_url'));
-  res.json({
-    data
-  });
-});
-
 app.get('/', async (req, res) => {
   res.send('<h1>Motiff Square Server </h1>');
 });
@@ -41,7 +35,7 @@ app.get('/', async (req, res) => {
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
-
+app.use(cors());
 const homeRouter = require('./routes/home.routes');
 const testimonialRouter = require('./routes/testimonial.routes');
 const blogRouter = require('./routes/blog.routes');
@@ -54,6 +48,13 @@ app.use('/site-types', siteTypesRouter);
 app.use('/sites', siteRouter);
 const PORT = process.env.PORT || 3001;
 const MONGO_CONNECTION = config.get('db.host') + config.get('db.name');
+app.post('/upload-images', parser.array('image'), (req, res, next) => {
+  let data = _.map(req.files, _.partialRight(_.pick, 'secure_url'));
+  res.json({
+    data
+  });
+});
+
 const server = async () => {
   try {
     await mongoose.connect(MONGO_CONNECTION, {
